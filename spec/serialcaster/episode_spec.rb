@@ -2,10 +2,12 @@ require 'serialcaster/episode'
 
 module Serialcaster
   RSpec.describe Episode do
-    let(:attrs) { {title: "title", number: 1, file: "file.m4a", time: Time.utc(2016, 1, 1)} }
-    subject {
-      Episode.new(attrs)
-    }
+    let(:attrs) { {
+      title: "title", number: 1, file: "file.m4a", time: Time.utc(2016, 1, 1),
+      content_length: 42
+    } }
+
+    subject { Episode.new(attrs) }
 
     it "has a title" do
       expect(subject.title).to eq("title")
@@ -17,6 +19,10 @@ module Serialcaster
 
     it "has a file" do
       expect(subject.file).to eq("file.m4a")
+    end
+
+    it "has a content length" do
+      expect(subject.content_length).to eq(42)
     end
 
     it "has a time" do

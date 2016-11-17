@@ -1,6 +1,8 @@
 require 'vcr_helper'
 require 'serialcaster/fetcher'
 require 'digest/sha1'
+require 'uri'
+require 'rack/utils'
 
 module Serialcaster
   RSpec.describe Fetcher do
@@ -58,18 +60,44 @@ module Serialcaster
         expect(actual_digest).to eq(programme_sha1)
       end
 
-      it "can fetch the file list" do
+      it "can fetch the file name/length list" do
         expected_file_list = [
-          'Journey Into Space - Operation Luna - Episode 1.m4a',
-          'Journey Into Space - The Red Planet - Episode 2.m4a',
-          'Journey Into Space - Operation Luna - Episode 2.m4a',
-          'Journey Into Space - The Red Planet - Episode 1.m4a',
-          'Journey Into Space - Operation Luna - Episode 10.m4a',
-          'Random spacejunk Episode 1.m4a',
-          'Assorted.mp3'
+          ['Journey Into Space - Operation Luna - Episode 1.m4a', 11],
+          ['Journey Into Space - The Red Planet - Episode 2.m4a', 11],
+          ['Journey Into Space - Operation Luna - Episode 2.m4a', 11],
+          ['Journey Into Space - The Red Planet - Episode 1.m4a', 11],
+          ['Journey Into Space - Operation Luna - Episode 10.m4a', 11],
+          ['Random spacejunk Episode 1.m4a', 11],
+          ['Assorted.mp3', 11]
         ].sort
 
         expect(subject.file_list.sort).to eq(expected_file_list)
+      end
+    end
+
+    context "generating a file URL" do
+      let(:uri) {
+        URI.parse(subject.url_for_file('test'))
+      }
+      let(:query) {
+        Rack::Utils.parse_query(uri.query)
+      }
+
+      it "points at the right region and bucket" do
+        expect(uri.host).to eq('mp-serialcaster-test.s3.amazonaws.com')
+      end
+
+      it "points at the right file" do
+        expect(uri.path).to eq('/test')
+      end
+
+      it "is signed" do
+        expect(query).to have_key('X-Amz-Algorithm')
+        expect(query).to have_key('X-Amz-Credential')
+      end
+
+      it "expires in a week" do
+        expect(query['X-Amz-Expires']).to eq((60*60*24*7).to_s)
       end
     end
   end

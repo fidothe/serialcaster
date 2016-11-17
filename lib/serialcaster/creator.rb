@@ -64,13 +64,16 @@ module Serialcaster
 
     def extract_episode_attrs
       file_list.map(&details_extractor).compact.sort(&details_sorter)
-        .map { |season, episode_number, title, file|
-          {title: title, number: episode_number, file: file}
+        .map { |season, episode_number, title, file, content_length|
+          {
+            title: title, number: episode_number,
+            file: file, content_length: content_length
+          }
         }
     end
 
     def details_extractor
-      ->(file) {
+      ->(file, content_length) {
         pattern, season = episode_file_patterns.each_with_index.find { |pattern, season|
           pattern.match(file)
         }
@@ -80,7 +83,7 @@ module Serialcaster
         episode_number = match.names.include?('episode') ? Integer(match[:episode], 10) : "X"
         title = match.names.include?('title') ? match[:title] : file
 
-        [season, episode_number, title, file]
+        [season, episode_number, title, file, content_length]
       }
     end
 

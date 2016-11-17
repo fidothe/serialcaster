@@ -8,10 +8,10 @@ module Serialcaster
     let(:time) { EpisodeTime.new('17:00') }
     let(:days) { EpisodeDays.new(:monday, :wednesday, :friday) }
     let(:episodes_attrs) { [
-      {title: 'Operation Luna', number: 1, file: 'e1.m4a'},
-      {title: 'Operation Luna', number: 2, file: 'e2.m4a'},
-      {title: 'Operation Luna', number: 3, file: 'e3.m4a'},
-      {title: 'Operation Luna', number: 4, file: 'e4.m4a'}
+      {title: 'Operation Luna', number: 1, file: 'e1.m4a', content_length: 42},
+      {title: 'Operation Luna', number: 2, file: 'e2.m4a', content_length: 42},
+      {title: 'Operation Luna', number: 3, file: 'e3.m4a', content_length: 42},
+      {title: 'Operation Luna', number: 4, file: 'e4.m4a', content_length: 42}
     ] }
 
     subject {

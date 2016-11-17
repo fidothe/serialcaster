@@ -19,13 +19,13 @@ module Serialcaster
     } }
     let(:io) { StringIO.new(JSON.generate(input)) }
     let(:file_list) { [
-      'Journey Into Space - Operation Luna - Episode 1.m4a',
-      'Journey Into Space - The Red Planet - Episode 2.m4a',
-      'Journey Into Space - Operation Luna - Episode 2.m4a',
-      'Journey Into Space - The Red Planet - Episode 1.m4a',
-      'Journey Into Space - Operation Luna - Episode 10.m4a',
-      'Random spacejunk Episode 1.m4a',
-      'Assorted.mp3'
+      ['Journey Into Space - Operation Luna - Episode 1.m4a', 42],
+      ['Journey Into Space - The Red Planet - Episode 2.m4a', 42],
+      ['Journey Into Space - Operation Luna - Episode 2.m4a', 42],
+      ['Journey Into Space - The Red Planet - Episode 1.m4a', 42],
+      ['Journey Into Space - Operation Luna - Episode 10.m4a', 42],
+      ['Random spacejunk Episode 1.m4a', 42],
+      ['Assorted.mp3', 42]
     ] }
 
     subject { Creator.new(io, file_list) }
@@ -43,15 +43,20 @@ module Serialcaster
     it "generates the correct episode list" do
       expect(subject.episodes_attrs).to eq([
         {title: 'Journey Into Space - Operation Luna', number: 1,
-         file: 'Journey Into Space - Operation Luna - Episode 1.m4a'},
+         file: 'Journey Into Space - Operation Luna - Episode 1.m4a',
+         content_length: 42},
         {title: 'Journey Into Space - Operation Luna', number: 2,
-         file: 'Journey Into Space - Operation Luna - Episode 2.m4a'},
+         file: 'Journey Into Space - Operation Luna - Episode 2.m4a',
+         content_length: 42},
         {title: 'Journey Into Space - Operation Luna', number: 10,
-         file: 'Journey Into Space - Operation Luna - Episode 10.m4a'},
+         file: 'Journey Into Space - Operation Luna - Episode 10.m4a',
+         content_length: 42},
         {title: 'The Red Planet', number: 1,
-         file: 'Journey Into Space - The Red Planet - Episode 1.m4a'},
+         file: 'Journey Into Space - The Red Planet - Episode 1.m4a',
+         content_length: 42},
         {title: 'The Red Planet', number: 2,
-         file: 'Journey Into Space - The Red Planet - Episode 2.m4a'}
+         file: 'Journey Into Space - The Red Planet - Episode 2.m4a',
+         content_length: 42},
       ])
     end
 

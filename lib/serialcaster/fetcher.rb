@@ -16,11 +16,18 @@ module Serialcaster
     end
 
     def file_list
+      prefix_plus_sep = "#{prefix}/"
       bucket.objects(prefix: prefix).reject { |obj_summary|
         obj_summary.key == metadata_key
+      }.reject { |obj_summary|
+        obj_summary.key == prefix_plus_sep
       }.map { |obj_summary|
-        obj_summary.key["#{prefix}/".length..-1]
-      }.reject { |key| key == "" }
+        [obj_summary.key[prefix_plus_sep.length..-1], obj_summary.content_length]
+      }
+    end
+
+    def url_for_file(key)
+      bucket.object(key).presigned_url(:get, expires_in: 604800)
     end
 
     private
