@@ -23,10 +23,6 @@ module Serialcaster
       expect(subject.description).to eq('Classic BBC radio drama')
     end
 
-    it "has a schedule" do
-      expect(subject.schedule).to eq(schedule)
-    end
-
     it "has an episode list" do
       expect(subject.episodes).to eq(episodes)
     end

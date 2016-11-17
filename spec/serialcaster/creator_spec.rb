@@ -34,41 +34,42 @@ module Serialcaster
       time = EpisodeTime.new('17:00')
       days = EpisodeDays.new(:sunday, :wednesday)
       schedule = Schedule.new({
-        start: Date.new(2016, 11, 18), time: time, days: days
+        start: Date.new(2016, 11, 18), time: time, days: days, episodes: subject.episodes_attrs
       })
 
       expect(subject.schedule).to eq(schedule)
     end
 
     it "generates the correct episode list" do
-      expect(subject.episodes).to eq([
-        Episode.new(title: 'Journey Into Space - Operation Luna', number: 1,
-                    file: 'Journey Into Space - Operation Luna - Episode 1.m4a'),
-        Episode.new(title: 'Journey Into Space - Operation Luna', number: 2,
-                    file: 'Journey Into Space - Operation Luna - Episode 2.m4a'),
-        Episode.new(title: 'Journey Into Space - Operation Luna', number: 10,
-                    file: 'Journey Into Space - Operation Luna - Episode 10.m4a'),
-        Episode.new(title: 'The Red Planet', number: 1,
-                    file: 'Journey Into Space - The Red Planet - Episode 1.m4a'),
-        Episode.new(title: 'The Red Planet', number: 2,
-                    file: 'Journey Into Space - The Red Planet - Episode 2.m4a')
+      expect(subject.episodes_attrs).to eq([
+        {title: 'Journey Into Space - Operation Luna', number: 1,
+         file: 'Journey Into Space - Operation Luna - Episode 1.m4a'},
+        {title: 'Journey Into Space - Operation Luna', number: 2,
+         file: 'Journey Into Space - Operation Luna - Episode 2.m4a'},
+        {title: 'Journey Into Space - Operation Luna', number: 10,
+         file: 'Journey Into Space - Operation Luna - Episode 10.m4a'},
+        {title: 'The Red Planet', number: 1,
+         file: 'Journey Into Space - The Red Planet - Episode 1.m4a'},
+        {title: 'The Red Planet', number: 2,
+         file: 'Journey Into Space - The Red Planet - Episode 2.m4a'}
       ])
     end
 
     it "generates a programme correctly" do
-      schedule = double
-      episodes = double
+      schedule = instance_double(Schedule)
       allow(subject).to receive(:schedule) { schedule }
-      allow(subject).to receive(:episodes) { episodes }
+      episodes = double
+      time = double(Time)
+
+      expect(schedule).to receive(:episodes_at).with(time) { episodes }
 
       programme = Programme.new({
         title: 'Journey Into Space',
         description: 'Classic BBC radio drama',
-        schedule: schedule,
         episodes: episodes
       })
 
-      expect(subject.programme).to eq(programme)
+      expect(subject.programme(time)).to eq(programme)
     end
   end
 end

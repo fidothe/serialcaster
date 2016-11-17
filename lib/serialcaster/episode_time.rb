@@ -12,15 +12,13 @@ module Serialcaster
       input_time >= available_time(input_time)
     end
 
-    def ==(other)
-      other.hour == hour && other.minute == minute
-    end
-
-    private
-
     def available_time(input_time)
       y, m, d = input_time.year, input_time.mon, input_time.day
       Time.utc(y, m, d, hour, minute)
+    end
+
+    def ==(other)
+      other.hour == hour && other.minute == minute
     end
   end
 end

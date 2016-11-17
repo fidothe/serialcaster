@@ -18,6 +18,12 @@ module Serialcaster
       end
     end
 
+    it "reports that what the availability time on a given date it" do
+      expected_time = Time.utc(2016, 1, 1, 17)
+      actual_time = subject.available_time(Date.new(2016, 1, 1))
+      expect(actual_time).to eq(expected_time)
+    end
+
     context "equality" do
       it "compares equal with another instance with the same time" do
         expect(subject).to eq(EpisodeTime.new('17:00'))

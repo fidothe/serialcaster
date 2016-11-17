@@ -23,20 +23,20 @@ module Serialcaster
       @schedule ||= Schedule.new({
         start: Date.parse(schedule_metadata['starting_from']),
         time: episode_time,
-        days: episode_days
+        days: episode_days,
+        episodes: episodes_attrs
       })
     end
 
-    def episodes
-      @episodes ||= extract_episodes
+    def episodes_attrs
+      @episodes_attrs ||= extract_episode_attrs
     end
 
-    def programme
+    def programme(request_time)
       @programme ||= Programme.new({
         title: metadata_json['programme'],
         description: metadata_json['description'],
-        schedule: schedule,
-        episodes: episodes
+        episodes: schedule.episodes_at(request_time)
       })
     end
 
@@ -62,15 +62,11 @@ module Serialcaster
       end
     end
 
-    def extract_episodes
-      file_list.map(&details_extractor).compact
-        .sort(&details_sorter).map { |season, episode_number, title, file|
-        create_episode(title, episode_number, file)
-      }
-    end
-
-    def create_episode(title, number, file)
-      Episode.new(title: title, number: number, file: file)
+    def extract_episode_attrs
+      file_list.map(&details_extractor).compact.sort(&details_sorter)
+        .map { |season, episode_number, title, file|
+          {title: title, number: episode_number, file: file}
+        }
     end
 
     def details_extractor
