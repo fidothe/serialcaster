@@ -12,7 +12,8 @@ module Serialcaster
     end
 
     def episodes_at(request_time)
-      available_episode_times(request_time.to_time).zip(episodes).map { |time, attrs|
+      ep_time_pairs = available_episode_times(request_time.to_time).zip(episodes)
+      ep_time_pairs.reject { |_, attrs| attrs.nil? }.map { |time, attrs|
         Episode.new(attrs.merge(time: time))
       }
     end

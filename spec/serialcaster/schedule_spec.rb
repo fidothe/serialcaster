@@ -44,8 +44,13 @@ module Serialcaster
           expect(subject.episodes_at(time)).to eq([])
         end
       end
-    end
 
+      context "when more episode slots exist than episodes" do
+        it "releases all the episodes" do
+          expect(subject.episodes_at(DateTime.new(2019)).count).to eq(4)
+        end
+      end
+    end
 
     context "equality" do
       it "compares equal if its start, time, and days are all equal" do
