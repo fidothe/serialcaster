@@ -76,5 +76,14 @@ module Serialcaster
 
       expect(subject.programme(time)).to eq(programme)
     end
+
+    it "generates a programme summary correctly" do
+      summary = ProgrammeSummary.new({
+        title: 'Journey Into Space',
+        description: 'Classic BBC radio drama',
+      })
+
+      expect(subject.programme_summary).to eq(summary)
+    end
   end
 end

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>All podcasts</title>
+  </head>
+  <body>
+    <ul>
+      <% podcasts.each do |url, summary| %>
+        <li><a href="<%= url %>"><%= summary.title %></li>
+      <% end %>
+    </ul>
+  </body>
+</html>

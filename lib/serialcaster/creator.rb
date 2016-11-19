@@ -2,6 +2,7 @@ require 'serialcaster/schedule'
 require 'serialcaster/episode_time'
 require 'serialcaster/episode_days'
 require 'serialcaster/programme'
+require 'serialcaster/programme_summary'
 require 'serialcaster/episode'
 require 'json'
 require 'date'
@@ -33,12 +34,20 @@ module Serialcaster
     end
 
     def programme(request_time)
-      @programme ||= Programme.new({
+      Programme.new({
         title: metadata_json['programme'],
         description: metadata_json['description'],
         episodes: schedule.episodes_at(request_time)
       })
     end
+
+    def programme_summary
+      @programme_summary ||= ProgrammeSummary.new({
+        title: metadata_json['programme'],
+        description: metadata_json['description']
+      })
+    end
+
 
     private
 

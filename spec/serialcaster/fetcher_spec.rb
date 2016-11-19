@@ -12,15 +12,17 @@ module Serialcaster
         'cMEDR3Wj9eLk284pAxQn/7AdIs8i/7KjdibINobv'
       )
     }
+    let(:bucket_name) { 'mp-serialcaster-test' }
     let(:min_attrs) { {
-      bucket: 'mp-serialcaster-test',
-      prefix: 'journey into space'
+      bucket: bucket_name,
+      prefix: 'journey-into-space'
+    } }
+    let(:s3_cred_attrs) { {
+      credentials: credentials,
+      region: 'us-east-1'
     } }
     let(:attrs) {
-      min_attrs.merge({
-        credentials: credentials,
-        region: 'us-east-1'
-      })
+      min_attrs.merge(s3_cred_attrs)
     }
     subject { Fetcher.new(attrs) }
 
@@ -29,7 +31,7 @@ module Serialcaster
     end
 
     it "has a prefix / folder path" do
-      expect(subject.prefix).to eq('journey into space')
+      expect(subject.prefix).to eq('journey-into-space')
     end
 
     context "S3 credentials" do
@@ -72,6 +74,12 @@ module Serialcaster
         ].sort
 
         expect(subject.file_list.sort).to eq(expected_file_list)
+      end
+
+      it "can fetch a list of all prefixes that have a programme.json" do
+        actual_list = Fetcher.list(bucket_name, s3_cred_attrs)
+
+        expect(actual_list).to eq(['journey-into-space'])
       end
     end
 

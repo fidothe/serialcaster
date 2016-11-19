@@ -1,8 +1,19 @@
 require 'aws-sdk'
+require 'pathname'
 
 module Serialcaster
   class Fetcher
     attr_reader :bucket_name, :prefix, :credentials, :region
+
+    def self.list(bucket_name, opts = {})
+      client = Aws::S3::Client.new(opts)
+      bucket = Aws::S3::Resource.new(client: client).bucket(bucket_name)
+      candidates = client.list_objects(bucket: bucket_name, delimiter: '/')
+        .common_prefixes.map { |res| Pathname.new(res.prefix).cleanpath }
+      candidates.select { |prefix|
+        bucket.object(prefix.join('programme.json').to_s).exists?
+      }.map(&:to_s)
+    end
 
     def initialize(attrs = {})
       @bucket_name = attrs.fetch(:bucket)
