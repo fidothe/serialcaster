@@ -12,7 +12,7 @@ module Serialcaster
     def self.podcasts
       @podcasts ||= Hash[podcast_prefixes.map { |prefix|
         fetcher = Fetcher.new({
-          bucket_name: ENV.fetch('SERIALCASTER_BUCKET'),
+          bucket: ENV.fetch('SERIALCASTER_BUCKET'),
           prefix: prefix
         })
         [prefix, Podcast.new(fetcher)]
