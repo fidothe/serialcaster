@@ -96,7 +96,7 @@ module Serialcaster
       end
 
       it "points at the right file" do
-        expect(uri.path).to eq('/test')
+        expect(uri.path).to eq('/journey-into-space/test')
       end
 
       it "is signed" do
