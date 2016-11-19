@@ -51,8 +51,15 @@ module Serialcaster
       @metadata_key ||= prefix_path.join("programme.json").to_s
     end
 
+    def client_attrs
+      attrs = {}
+      attrs[:region] = region if region
+      attrs[:credentials] = credentials if credentials
+      attrs
+    end
+
     def client
-      @client ||= Aws::S3::Client.new(region: region, credentials: credentials)
+      @client ||= Aws::S3::Client.new(client_attrs)
     end
 
     def s3
