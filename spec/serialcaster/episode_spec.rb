@@ -38,5 +38,23 @@ module Serialcaster
         expect(subject).not_to eq(Episode.new(attrs.merge(number: 10)))
       end
     end
+
+    context "generating a guid" do
+      it "considers file and content_length" do
+        other_episode_1 = Episode.new(attrs.merge(file: 'diff.mp4'))
+        other_episode_2 = Episode.new(attrs.merge(content_length: 13))
+
+        expect(subject.rss_guid).not_to eq(other_episode_1.rss_guid)
+        expect(subject.rss_guid).not_to eq(other_episode_2.rss_guid)
+      end
+
+      it "ignores everything except file and content_length" do
+        other_episode = Episode.new(attrs.merge({
+          title: 'other', number: 2, time: Time.new(2014,1,1)
+        }))
+
+        expect(subject.rss_guid).to eq(other_episode.rss_guid)
+      end
+    end
   end
 end

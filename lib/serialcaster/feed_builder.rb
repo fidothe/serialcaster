@@ -25,6 +25,7 @@ module Serialcaster
           maker.items.new_item do |item|
             item.link = media_url
             item.title = episode.title
+            item.guid = epsiode.rss_guid
             item.updated = Time.now.to_s
             item.enclosure.url = media_url
             item.enclosure.type = mime_type
