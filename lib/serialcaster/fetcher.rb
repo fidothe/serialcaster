@@ -37,9 +37,11 @@ module Serialcaster
       }
     end
 
-    def url_for_file(filename)
-      key = prefix_path.join(filename).to_s
-      bucket.object(key).presigned_url(:get, expires_in: 604800)
+    def file_url_generator
+      ->(filename) {
+        key = prefix_path.join(filename).to_s
+        bucket.object(key).presigned_url(:get, expires_in: 604800)
+      }
     end
 
     private

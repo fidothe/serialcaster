@@ -83,9 +83,12 @@ module Serialcaster
       end
     end
 
-    context "generating a file URL" do
+    context "generating a file URL generator" do
+      let(:generator) {
+        subject.file_url_generator
+      }
       let(:uri) {
-        URI.parse(subject.url_for_file('test'))
+        URI.parse(generator.call('test'))
       }
       let(:query) {
         Rack::Utils.parse_query(uri.query)

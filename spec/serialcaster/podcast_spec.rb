@@ -5,9 +5,10 @@ module Serialcaster
   RSpec.describe Podcast do
     let(:metadata_io) { double }
     let(:file_list) { double }
+    let(:url_generator) { double }
     let(:fetcher) {
       instance_double(Fetcher, {
-        metadata_io: metadata_io, file_list: file_list
+        metadata_io: metadata_io, file_list: file_list, file_url_generator: url_generator
       })
     }
 
@@ -52,7 +53,7 @@ module Serialcaster
       allow(subject).to receive(:programme).with(time) { programme }
 
       expect(FeedBuilder).to receive(:new).with({
-        url: url, programme: programme, fetcher: fetcher
+        url: url, programme: programme, url_generator: url_generator
       }) { feed_builder }
 
       expect(subject.feed_builder(url, time)).to be(feed_builder)

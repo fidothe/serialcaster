@@ -20,7 +20,7 @@ module Serialcaster
 
     def feed_builder(url, time)
       FeedBuilder.new({
-        url: url, fetcher: fetcher,
+        url: url, url_generator: fetcher.file_url_generator,
         programme: programme(time)
       })
     end

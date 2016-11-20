@@ -3,12 +3,12 @@ require 'mime/types'
 
 module Serialcaster
   class FeedBuilder
-    attr_reader :url, :programme, :fetcher
+    attr_reader :url, :programme, :url_generator
 
     def initialize(attrs)
       @url = attrs.fetch(:url)
       @programme = attrs.fetch(:programme)
-      @fetcher = attrs.fetch(:fetcher)
+      @url_generator = attrs.fetch(:url_generator)
     end
 
     def feed
@@ -20,12 +20,12 @@ module Serialcaster
         maker.channel.title = programme.title
         maker.channel.description = programme.description
         programme.episodes.reverse.each do |episode|
-          media_url = fetcher.url_for_file(episode.file)
+          media_url = url_generator.call(episode.file)
           mime_type = MIME::Types.type_for(episode.file).first
           maker.items.new_item do |item|
             item.link = media_url
             item.title = episode.title
-            item.guid = epsiode.rss_guid
+            item.guid.content = episode.rss_guid
             item.updated = Time.now.to_s
             item.enclosure.url = media_url
             item.enclosure.type = mime_type

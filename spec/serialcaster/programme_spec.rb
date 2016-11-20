@@ -2,13 +2,11 @@ require 'serialcaster/programme'
 
 module Serialcaster
   RSpec.describe Programme do
-    let(:schedule) { double("Serialcaster::Schedule") }
     let(:episode) { double("Serialcaster::Episode") }
     let(:episodes) { [episode] }
     let(:attrs) { {
       title: 'Journey Into Space',
       description: 'Classic BBC radio drama',
-      schedule: schedule,
       episodes: episodes
     } }
     subject {
