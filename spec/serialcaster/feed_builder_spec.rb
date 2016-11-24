@@ -20,7 +20,7 @@ module Serialcaster
         episodes: [episode]
       })
     }
-    let(:url_generator) {
+    let(:file_url_generator) {
       ->(file) { "https://#{file}" }
     }
 
@@ -29,7 +29,7 @@ module Serialcaster
         FeedBuilder.new({
           url: 'https://feed.rss',
           programme: programme,
-          url_generator: url_generator
+          file_url_generator: file_url_generator
         }).to_s
       }.not_to raise_error
     end

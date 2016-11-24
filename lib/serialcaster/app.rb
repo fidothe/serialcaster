@@ -1,26 +1,20 @@
 require 'sinatra/base'
 require 'uri'
 require 'serialcaster/fetcher'
-require 'serialcaster/podcast'
+require 'serialcaster/podcast_repository'
 
 module Serialcaster
   class App < Sinatra::Base
-    def self.podcast_prefixes
-      Fetcher.list(ENV.fetch('SERIALCASTER_BUCKET'))
+    def podcast_summaries
+      PodcastRepository.podcast_summaries
     end
 
-    def self.podcasts
-      @podcasts ||= Hash[podcast_prefixes.map { |prefix|
-        fetcher = Fetcher.new({
-          bucket: ENV.fetch('SERIALCASTER_BUCKET'),
-          prefix: prefix
-        })
-        [prefix, Podcast.new(fetcher)]
-      }]
+    def podcast
+      @podcast ||= PodcastRepository.find_podcast(params[:podcast], request.url, Time.now.utc)
     end
 
-    def podcasts
-      self.class.podcasts
+    def podcast_summary
+      @podcast_summary ||= PodcastRepository.find_podcast_summary(params[:podcast])
     end
 
     set :views, File.expand_path('../../views', __dir__)
@@ -32,10 +26,10 @@ module Serialcaster
     }
 
     get '/', authed: true do
-      summaries = podcasts.map { |prefix, podcast|
+      summaries = podcast_summaries.map { |podcast|
         [
-          "/#{prefix}?t=#{ENV['SERIALCASTER_SEKRIT_TOKEN']}",
-          podcast.programme_summary
+          "/#{podcast.prefix}?t=#{ENV['SERIALCASTER_SEKRIT_TOKEN']}",
+          podcast.programme
         ]
       }
 
@@ -43,17 +37,18 @@ module Serialcaster
     end
 
     get '/:podcast.rss', authed: true do
-      podcast = podcasts[params[:podcast]]
       not_found && return if podcast.nil?
+      etag podcast.programme.etag, :weak
+      last_modified podcast.programme.episodes.last.time
+      expires 86400, :public
 
       status 200
       content_type 'application/rss+xml'
-      body podcast.feed_builder(request.url, Time.now.utc).to_s
+      body podcast.feed_builder.to_s
     end
 
     get '/:podcast', authed: true do
-      podcast = podcasts[params[:podcast]]
-      not_found && return if podcast.nil?
+      not_found && return if podcast_summary.nil?
       rss_path = "/#{params[:podcast]}.rss"
       rss_query = "t=#{ENV['SERIALCASTER_SEKRIT_TOKEN']}"
       rss_url = URI::Generic.build({
@@ -64,7 +59,7 @@ module Serialcaster
       }).to_s
 
 
-      erb :show, locals: {summary: podcast.programme_summary, rss_url: rss_url}
+      erb :show, locals: {summary: podcast_summary.programme, rss_url: rss_url}
     end
   end
 end
