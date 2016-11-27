@@ -1,6 +1,7 @@
 require 'serialcaster/feed_builder'
 require 'serialcaster/programme'
 require 'serialcaster/episode'
+require 'rss'
 
 module Serialcaster
   RSpec.describe FeedBuilder do
@@ -26,12 +27,26 @@ module Serialcaster
 
     it "generates feed RSS without blowing up" do
       expect {
+      }.not_to raise_error
+    end
+
+    context "the RSS feed" do
+      let(:rss) {
         FeedBuilder.new({
           url: 'https://feed.rss',
           programme: programme,
           file_url_generator: file_url_generator
         }).to_s
-      }.not_to raise_error
+      }
+      let(:parsed_feed) { ::RSS::Parser.parse(rss) }
+
+      context "an episode" do
+        let(:parsed_episode) { parsed_feed.items.first }
+
+        it "has the correct pub date/time" do
+          expect(parsed_episode.date).to eq(episode.time)
+        end
+      end
     end
   end
 end

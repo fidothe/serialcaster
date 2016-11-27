@@ -26,7 +26,7 @@ module Serialcaster
             item.link = media_url
             item.title = episode.title
             item.guid.content = episode.rss_guid
-            item.updated = Time.now.to_s
+            item.updated = episode.time
             item.enclosure.url = media_url
             item.enclosure.type = mime_type
             item.enclosure.length = episode.content_length
