@@ -19,7 +19,7 @@ module Serialcaster
         maker.channel.link = url
         maker.channel.title = programme.title
         maker.channel.description = programme.description
-        programme.episodes.reverse.each do |episode|
+        programme.episodes.each do |episode|
           media_url = file_url_generator.call(episode.file)
           mime_type = MIME::Types.type_for(episode.file).first
           maker.items.new_item do |item|
